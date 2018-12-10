@@ -1,0 +1,40 @@
+---
+
+- name: Create TEMP dir
+  command: mktemp --directory
+  register: tempdir
+  check_mode: no
+
+- block:
+
+    - name: Download artifact
+      aws_s3:
+        bucket: "{{ _cd_build.bucket }}"
+        object: "{{ _cd_build.branch }}/builds/{{ _cd_build.number }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
+        dest: "{{ tempdir.stdout }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
+        mode: get
+        overwrite: different
+
+    - name: Download signature file of artifact
+      aws_s3:
+        bucket: "{{ _cd_build.bucket }}"
+        object: "{{ _cd_build.branch }}/builds/{{ _cd_build.number }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig"
+        dest: "{{ tempdir.stdout }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig"
+        mode: get
+        overwrite: different
+
+    - name: Verify signed file
+      command: "gpg --verify --trusted-key {{ _cd_build.gpg.key }} {{ tempdir.stdout }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig {{ tempdir.stdout }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
+      changed_when: no
+
+    - name: Create install dir
+      file: path="{{ _cd_build.artifacts[artifact].install.dir }}" state=directory owner="{{ _cd_build.artifacts[artifact].install.user }}" group="{{ _cd_build.artifacts[artifact].install.group }}" mode=0755
+
+    - include_tasks: "install-{{ _cd_build.artifacts[artifact].artifact.type }}.yml"
+      vars:
+        src_dir: "{{ tempdir.stdout }}"
+
+  always:
+
+    - name: Cleanup TEMP dir
+      file: name="{{ tempdir.stdout }}" state=absent

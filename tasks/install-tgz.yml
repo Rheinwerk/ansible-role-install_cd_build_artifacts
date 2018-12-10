@@ -1,0 +1,38 @@
+---
+
+- name: Create unarchive TEMP dir
+  command: mktemp --directory
+  register: unarchive_tempdir
+  check_mode: no
+
+- block:
+
+    - name: Unarchive 'tar.gz' file
+      unarchive:
+        src: "{{ src_dir }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
+        dest: "{{ unarchive_tempdir.stdout }}"
+        owner: "{{ _cd_build.artifacts[artifact].install.user }}"
+        group: "{{ _cd_build.artifacts[artifact].install.group }}"
+        remote_src: yes
+
+    - name: "Check Git-Commit for new installed artifact '{{ artifact }}'"
+      include_tasks: "check-git-commit.yml"
+      vars:
+        artifact_dir: "{{ unarchive_tempdir.stdout }}"
+        # This is a filename pattern that should be searched for in the artifact_dir.
+        # The result of that find will be checked.
+        artifact_filename_pattern: "{{ _cd_build.artifacts[artifact].install.filename }}"
+        # This should fail it won't match because that is the artifact that will be installed.
+        fail_if_not_matched: yes
+
+    - name: "Copy unarchived 'tar.gz' content to install dir {{ _cd_build.artifacts[artifact].install.dir }}"
+      synchronize: src="{{ unarchive_tempdir.stdout }}" dest="{{ _cd_build.artifacts[artifact].install.dir }}" recursive=yes
+      delegate_to: "{{ inventory_hostname }}"
+
+    - name: "Install Build Info for artifact '{{ artifact }}'"
+      include_tasks: install-build-info.yml
+
+  always:
+
+    - name: Cleanup unarchive TEMP dir
+      file: name="{{ unarchive_tempdir.stdout }}" state=absent

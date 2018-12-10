@@ -1,0 +1,15 @@
+---
+
+CD_BUILD_ARTIFACT:
+  bucket: {{ _cd_build.bucket }}
+  branch: {{ _cd_build.branch }}
+  number: {{ _cd_build.number }}
+  git_commit: {{ _cd_build.git_commit }}
+  gpg:
+    key: {{ _cd_build.gpg.key }}
+  artifact:
+    type: {{ _cd_build.artifacts[artifact].artifact.type }}
+    filename: {{ _cd_build.artifacts[artifact].artifact.filename }}
+    install:
+      dir: {{ _cd_build.artifacts[artifact].install.dir }}
+      filename: {{ _cd_build.artifacts[artifact].install.filename }}

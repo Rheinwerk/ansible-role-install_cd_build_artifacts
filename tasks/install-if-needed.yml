@@ -1,0 +1,17 @@
+---
+
+- name: "Check Git-Commit of already installed artifact ('{{ artifact }}')"
+  include_tasks: "check-git-commit.yml"
+  vars:
+    # This is the target dir of the artifact
+    artifact_dir: "{{ _cd_build.artifacts[artifact].install.dir }}"
+    # This is a filename pattern that should be searched for in the artifact_dir.
+    # The result of that find will be checked.
+    artifact_filename_pattern: "{{ _cd_build.artifacts[artifact].install.filename }}"
+    # If it's the first installation the git-commit will not match, of course.
+    # If there is already an installed artifact that have a diff git-commit the new artifact should be installed.
+    fail_if_not_matched: no
+
+- name: "Install artifact '{{ artifact }}'"
+  include_tasks: install.yml
+  when: not git_commit_matched

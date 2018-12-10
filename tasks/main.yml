@@ -1,0 +1,7 @@
+---
+
+- name: Download and install artifacts if not already installed
+  include_tasks: install-if-needed.yml
+  vars:
+    artifact: "{{ item.key }}"
+  with_dict: "{{ _cd_build.artifacts }}"

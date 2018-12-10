@@ -1,0 +1,35 @@
+---
+# defaults file for ansible-role-install_cd_build_artifacts
+
+_cd_build:
+  bucket: aws-s3-bucket
+  branch: master
+  number: 1
+  git_commit: 0123456789abcdef0123456789abcdef01234567
+  info:
+    dir: /etc/application/build
+    user: root
+    group: root
+  gpg:
+    key: 0123456789ABCDEF
+  artifacts:
+    "artifact-01":
+      artifact:
+        type: tgz
+        filename: artifact-01.tar.gz
+      install:
+        dir: /opt/application-01
+        # In case of type 'tgz' this will be the original JAR filename and it will not be renamed by installation.
+        filename: artifact-01.jar
+        user: root
+        group: root
+    "artifact-02":
+      artifact:
+        type: war
+        filename: artifact-02.war
+      install:
+        dir: /opt/tomcat/webapps
+        # In case of type 'war' this will be the final WAR filename. It can be a different one as the original one.
+        filename: renamed-artifact-02.war
+        user: root
+        group: root
