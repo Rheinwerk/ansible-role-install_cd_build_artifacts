@@ -26,7 +26,7 @@
         fail_if_not_matched: yes
 
     - name: "Copy unarchived 'tar.gz' content to install dir {{ _cd_build.artifacts[artifact].install.dir }}"
-      synchronize: src="{{ unarchive_tempdir.stdout }}" dest="{{ _cd_build.artifacts[artifact].install.dir }}" recursive=yes
+      synchronize: src="{{ unarchive_tempdir.stdout }}/" dest="{{ _cd_build.artifacts[artifact].install.dir }}" recursive=yes
       delegate_to: "{{ inventory_hostname }}"
 
     - name: "Install Build Info for artifact '{{ artifact }}'"
