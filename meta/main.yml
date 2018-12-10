@@ -1,4 +1,5 @@
 galaxy_info:
+  role_name: install_cd_build_artifacts
   author: Alexander Berresch
   description: Download and installs CenterDevice Build artifacts from AWS S3
   company: Rheinwerk
