@@ -1,0 +1,19 @@
+---
+
+- name: Create temp file
+  command: mktemp /tmp/ansible.XXXXXXXXX
+  register: tempfile
+  check_mode: no
+
+- block:
+
+    - name: Install GPG Public Key
+      copy: src="jenkins@centerdevice.de.pub" dest="{{ tempfile.stdout }}" owner=root group=root mode=0600
+
+    - name: Import GPG Public Key
+      command: gpg --import {{ tempfile.stdout }}
+
+  always:
+
+    - name: Cleanup temp file
+      file: name="{{ tempfile.stdout }}" state=absent

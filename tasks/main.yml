@@ -1,5 +1,8 @@
 ---
 
+- name: Install GPG Public Key of Jenkins
+  include_tasks: install-jenkins-gpg-pubkey.yml
+
 - name: Download and install artifacts if not already installed
   include_tasks: install-if-needed.yml
   vars:
