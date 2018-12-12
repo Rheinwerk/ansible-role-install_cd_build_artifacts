@@ -3,7 +3,7 @@ CenterDevice artifacts installation
 
 This role can be used to install CenterDevice artifacts from a AWS S3 bucket
 
-[![Build Status](https://travis-ci.org/Rheinwerk/ansible-role-install_cd_build_artifacts.svg?branch=master)]((https://travis-ci.org/Rheinwerk/ansible-role-install_cd_build_artifacts)
+[![Build Status](https://travis-ci.org/Rheinwerk/ansible-role-install_cd_build_artifacts.svg?branch=master)](https://travis-ci.org/Rheinwerk/ansible-role-install_cd_build_artifacts)
 
 Requirements
 ------------
