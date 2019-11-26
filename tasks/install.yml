@@ -10,7 +10,7 @@
     - name: Download artifact
       aws_s3:
         bucket: "{{ _cd_build.bucket }}"
-        object: "{{ _cd_build.branch }}/builds/{{ _cd_build.number }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
+        object: "{{ _cd_build.prefix }}/{{ _cd_build.branch }}/builds/{{ _cd_build.number }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
         dest: "{{ tempdir.stdout }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
         mode: get
         overwrite: different
@@ -18,7 +18,7 @@
     - name: Download signature file of artifact
       aws_s3:
         bucket: "{{ _cd_build.bucket }}"
-        object: "{{ _cd_build.branch }}/builds/{{ _cd_build.number }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig"
+        object: "{{ _cd_build.prefix }}/{{ _cd_build.branch }}/builds/{{ _cd_build.number }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig"
         dest: "{{ tempdir.stdout }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig"
         mode: get
         overwrite: different

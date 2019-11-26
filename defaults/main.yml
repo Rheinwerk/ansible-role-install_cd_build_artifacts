@@ -3,6 +3,7 @@
 
 _cd_build:
   bucket: aws-s3-bucket
+  prefix: ""
   branch: master
   number: 1
   git_commit: 0123456789abcdef0123456789abcdef01234567
