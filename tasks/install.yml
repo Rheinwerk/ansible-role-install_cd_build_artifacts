@@ -7,25 +7,33 @@
 
 - block:
 
-    - name: Download artifact
-      aws_s3:
-        bucket: "{{ _cd_build.bucket }}"
-        object: "{{ _cd_build.prefix|default('') }}/{{ _cd_build.branch }}/builds/{{ _cd_build.number }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
-        dest: "{{ tempdir.stdout }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
-        mode: get
-        overwrite: different
+    - name: Upload local artifact
+      copy:
+        src: "{{ _cd_build.local_artifacts_dir }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
+        dest: "{{ tempdir.stdout }}"
+      when: _cd_build.use_local_artifacts
 
-    - name: Download signature file of artifact
-      aws_s3:
-        bucket: "{{ _cd_build.bucket }}"
-        object: "{{ _cd_build.prefix|default('') }}/{{ _cd_build.branch }}/builds/{{ _cd_build.number }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig"
-        dest: "{{ tempdir.stdout }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig"
-        mode: get
-        overwrite: different
+    - block:
+        - name: Download artifact
+          aws_s3:
+            bucket: "{{ _cd_build.bucket }}"
+            object: "{{ _cd_build.prefix|default('') }}/{{ _cd_build.branch }}/builds/{{ _cd_build.number }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
+            dest: "{{ tempdir.stdout }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
+            mode: get
+            overwrite: different
 
-    - name: Verify signed file
-      command: "gpg --verify --trusted-key {{ _cd_build.gpg.key }} {{ tempdir.stdout }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig {{ tempdir.stdout }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
-      changed_when: no
+        - name: Download signature file of artifact
+          aws_s3:
+            bucket: "{{ _cd_build.bucket }}"
+            object: "{{ _cd_build.prefix|default('') }}/{{ _cd_build.branch }}/builds/{{ _cd_build.number }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig"
+            dest: "{{ tempdir.stdout }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig"
+            mode: get
+            overwrite: different
+
+        - name: Verify signed file
+          command: "gpg --verify --trusted-key {{ _cd_build.gpg.key }} {{ tempdir.stdout }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig {{ tempdir.stdout }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
+          changed_when: no
+      when: not _cd_build.use_local_artifacts
 
     - name: Create install dir
       file: path="{{ _cd_build.artifacts[artifact].install.dir }}" state=directory owner="{{ _cd_build.artifacts[artifact].install.user }}" group="{{ _cd_build.artifacts[artifact].install.group }}" mode=0755

@@ -10,6 +10,7 @@
     artifact_filename_pattern: "{{ _cd_build.artifacts[artifact].artifact.filename }}"
     # This should fail it won't match because that is the artifact that will be installed.
     fail_if_not_matched: yes
+  when: not _cd_build.use_local_artifacts
 
 - name: Install 'war' file
   copy:

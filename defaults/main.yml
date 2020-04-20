@@ -34,3 +34,5 @@ _cd_build:
         filename: renamed-artifact-02.war
         user: root
         group: root
+  use_local_artifacts: false
+  local_artifacts_dir: "artifacts/"

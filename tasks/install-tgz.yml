@@ -24,6 +24,7 @@
         artifact_filename_pattern: "{{ _cd_build.artifacts[artifact].install.filename }}"
         # This should fail it won't match because that is the artifact that will be installed.
         fail_if_not_matched: yes
+      when: not _cd_build.use_local_artifacts
 
     - name: "Copy unarchived 'tar.gz' content to install dir {{ _cd_build.artifacts[artifact].install.dir }}"
       synchronize: src="{{ unarchive_tempdir.stdout }}/" dest="{{ _cd_build.artifacts[artifact].install.dir }}" recursive=yes
