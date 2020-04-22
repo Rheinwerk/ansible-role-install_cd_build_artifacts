@@ -11,7 +11,7 @@
       copy:
         src: "{{ _cd_build.local_artifacts_dir }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
         dest: "{{ tempdir.stdout }}"
-      when: _cd_build.use_local_artifacts
+      when: _cd_build.use_local_artifacts|default(false)
 
     - block:
         - name: Download artifact
@@ -33,7 +33,7 @@
         - name: Verify signed file
           command: "gpg --verify --trusted-key {{ _cd_build.gpg.key }} {{ tempdir.stdout }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig {{ tempdir.stdout }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
           changed_when: no
-      when: not _cd_build.use_local_artifacts
+      when: not _cd_build.use_local_artifacts|default(false)
 
     - name: Create install dir
       file: path="{{ _cd_build.artifacts[artifact].install.dir }}" state=directory owner="{{ _cd_build.artifacts[artifact].install.user }}" group="{{ _cd_build.artifacts[artifact].install.group }}" mode=0755
