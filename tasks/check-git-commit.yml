@@ -7,18 +7,22 @@
   register: found
 
 - name: Found artifact file
-  debug: var=found
+  debug:
+    var: found
 
 # If it's the first installation it won't find any installed artifact. The caller can decide via var: 'fail_if_not_matched' if this is a fail.
 # If there will be found more than 1 artifact it will always fail.
 - name: "Fail if no artifact file was found in dir {{ artifact_dir }}"
-  fail: msg="Found 0 or more than 1 artifact file {{ artifact_filename_pattern }} in dir {{ artifact_dir }}"
+  fail:
+    msg: "Found 0 or more than 1 artifact file {{ artifact_filename_pattern }} in dir {{ artifact_dir }}"
   when: (fail_if_not_matched and found.matched == 0) or found.matched > 1
 
-- set_fact:
+- name: Set git_commit_matched
+  set_fact:
     git_commit_matched: no
 
-- block:
+- name: Git-Commit gathering
+  block:
 
     - name: "Search for Git-Commit in MANIFEST.MF ({{ found.files.0.path }})"
       shell: "unzip -p {{ found.files.0.path }} META-INF/MANIFEST.MF | awk '/Git-Commit:(.*)/ { print $2 }'"
@@ -27,13 +31,17 @@
       changed_when: no
       register: git_commit
 
-    - debug: var=git_commit
+    - name: Print git_commit
+      debug:
+        var: git_commit
 
-    - set_fact:
+    - name: Set git_commit_matched
+      set_fact:
         git_commit_matched: "{{ git_commit.stdout is match(_cd_build.git_commit) }}"
 
     - name: Fail if Git-Commit does not match
-      fail: msg="Git-Commit does not match for {{ found.files.0.path }}. Should be {{ _cd_build.git_commit }} but was {{ git_commit }}"
+      fail:
+        msg: "Git-Commit does not match for {{ found.files.0.path }}. Should be {{ _cd_build.git_commit }} but was {{ git_commit }}"
       when: fail_if_not_matched and not git_commit_matched
 
   when: found.matched == 1

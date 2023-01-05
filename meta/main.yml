@@ -1,12 +1,16 @@
 galaxy_info:
-  role_name: install_cd_build_artifacts
   author: Alexander Berresch
+  namespace: rheinwerk
+  role_name: install_cd_build_artifacts
   description: Download and installs CenterDevice Build artifacts from AWS S3
   company: Rheinwerk
   license: license (GPLv3)
-  min_ansible_version: 2.0
+  min_ansible_version: 2.9.0
+  # we do not provide credentials for accessing artifacts, skip molecule
+  min_ansible_container_version: "X"
   platforms:
-  - name: Ubuntu
-    versions:
-    - trusty
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
 dependencies: []

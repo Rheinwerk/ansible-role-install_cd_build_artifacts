@@ -1,48 +1,59 @@
 ---
 
 - name: Create TEMP dir
-  command: mktemp --directory
+  tempfile:
+    state: directory
   register: tempdir
-  check_mode: no
 
-- block:
+- name: Install tasks
+  block:
 
     - name: Upload local artifact
       copy:
         src: "{{ _cd_build.local_artifacts_dir }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
-        dest: "{{ tempdir.stdout }}"
+        dest: "{{ tempdir.path }}"
+        mode: 0640
       when: _cd_build.use_local_artifacts|default(false)
 
-    - block:
+    - name: Download tasks
+      block:
         - name: Download artifact
           aws_s3:
             bucket: "{{ _cd_build.bucket }}"
-            object: "{{ _cd_build.prefix|default('') }}/{{ _cd_build.branch }}/builds/{{ _cd_build.number }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
-            dest: "{{ tempdir.stdout }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
+            object: "{{ _cd_build.prefix | default('') }}/{{ _cd_build.branch }}/builds/{{ _cd_build.number }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
+            dest: "{{ tempdir.path }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
             mode: get
             overwrite: different
 
         - name: Download signature file of artifact
           aws_s3:
             bucket: "{{ _cd_build.bucket }}"
-            object: "{{ _cd_build.prefix|default('') }}/{{ _cd_build.branch }}/builds/{{ _cd_build.number }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig"
-            dest: "{{ tempdir.stdout }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig"
+            object: "{{ _cd_build.prefix | default('') }}/{{ _cd_build.branch }}/builds/{{ _cd_build.number }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig"
+            dest: "{{ tempdir.path }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig"
             mode: get
             overwrite: different
 
         - name: Verify signed file
-          command: "gpg --verify --trusted-key {{ _cd_build.gpg.key }} {{ tempdir.stdout }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig {{ tempdir.stdout }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
+          command: "gpg --verify --trusted-key {{ _cd_build.gpg.key }} {{ tempdir.path }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig {{ tempdir.path }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
           changed_when: no
       when: not _cd_build.use_local_artifacts|default(false)
 
     - name: Create install dir
-      file: path="{{ _cd_build.artifacts[artifact].install.dir }}" state=directory owner="{{ _cd_build.artifacts[artifact].install.user }}" group="{{ _cd_build.artifacts[artifact].install.group }}" mode=0755
+      file:
+        path: "{{ _cd_build.artifacts[artifact].install.dir }}"
+        state: directory
+        owner: "{{ _cd_build.artifacts[artifact].install.user }}"
+        group: "{{ _cd_build.artifacts[artifact].install.group }}"
+        mode: 0755
 
-    - include_tasks: "install-{{ _cd_build.artifacts[artifact].artifact.type }}.yml"
+    - name: "Include install-{{ _cd_build.artifacts[artifact].artifact.type }}"
+      include_tasks: "install-{{ _cd_build.artifacts[artifact].artifact.type }}.yml"
       vars:
-        src_dir: "{{ tempdir.stdout }}"
+        src_dir: "{{ tempdir.path }}"
 
   always:
 
     - name: Cleanup TEMP dir
-      file: name="{{ tempdir.stdout }}" state=absent
+      file:
+        name: "{{ tempdir.path }}"
+        state: absent

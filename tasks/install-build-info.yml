@@ -1,7 +1,17 @@
 ---
 
 - name: Create Build Info dir
-  file: path="{{ _cd_build.info.dir }}" state=directory owner="{{ _cd_build.info.user }}" group="{{ _cd_build.info.group }}" mode=0755
+  file:
+    path: "{{ _cd_build.info.dir }}"
+    state: directory
+    owner: "{{ _cd_build.info.user }}"
+    group: "{{ _cd_build.info.group }}"
+    mode: 0755
 
 - name: Install Build Info file
-  template: src=artifact.yml.j2 dest="{{ _cd_build.info.dir }}/{{ artifact }}.yml" owner="{{ _cd_build.info.user }}" group="{{ _cd_build.info.group }}" mode=0640
+  template:
+    src: artifact.yml.j2
+    dest: "{{ _cd_build.info.dir }}/{{ artifact }}.yml"
+    owner: "{{ _cd_build.info.user }}"
+    group: "{{ _cd_build.info.group }}"
+    mode: 0640
