@@ -16,6 +16,7 @@
       when: _cd_build.use_local_artifacts|default(false)
 
     - name: Download tasks
+      when: not _cd_build.use_local_artifacts|default(false)
       block:
         - name: Download artifact
           aws_s3:
@@ -36,7 +37,6 @@
         - name: Verify signed file
           command: "gpg --verify --trusted-key {{ _cd_build.gpg.key }} {{ tempdir.path }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig {{ tempdir.path }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
           changed_when: no
-      when: not _cd_build.use_local_artifacts|default(false)
 
     - name: Create install dir
       file:
