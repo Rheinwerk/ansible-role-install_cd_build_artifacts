@@ -1,7 +1,7 @@
 ---
 
 - name: "Check Git-Commit for artifact '{{ artifact }}'"
-  include_tasks: "check-git-commit.yml"
+  ansible.builtin.include_tasks: "check-git-commit.yml"
   vars:
     # This is the target dir of the artifact
     artifact_dir: "{{ src_dir }}"
@@ -13,7 +13,7 @@
   when: not _cd_build.use_local_artifacts|default(false)
 
 - name: Install 'war' file
-  copy:
+  ansible.builtin.copy:
     src: "{{ src_dir }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
     dest: "{{ _cd_build.artifacts[artifact].install.dir }}/{{ _cd_build.artifacts[artifact].install.filename }}"
     owner: "{{ _cd_build.artifacts[artifact].install.user }}"
@@ -22,4 +22,4 @@
     remote_src: yes
 
 - name: "Install Build Info for artifact '{{ artifact }}'"
-  include_tasks: install-build-info.yml
+  ansible.builtin.include_tasks: install-build-info.yml

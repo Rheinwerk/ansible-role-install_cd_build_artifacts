@@ -1,7 +1,7 @@
 ---
 
 - name: Create Build Info dir
-  file:
+  ansible.builtin.file:
     path: "{{ _cd_build.info.dir }}"
     state: directory
     owner: "{{ _cd_build.info.user }}"
@@ -9,7 +9,7 @@
     mode: 0755
 
 - name: Install Build Info file
-  template:
+  ansible.builtin.template:
     src: artifact.yml.j2
     dest: "{{ _cd_build.info.dir }}/{{ artifact }}.yml"
     owner: "{{ _cd_build.info.user }}"
