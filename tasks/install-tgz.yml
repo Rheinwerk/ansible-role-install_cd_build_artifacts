@@ -1,7 +1,7 @@
 ---
 
 - name: Create unarchive TEMP dir
-  tempfile:
+  ansible.builtin.tempfile:
     state: directory
   register: unarchive_tempdir
 
@@ -9,7 +9,7 @@
   block:
 
     - name: Unarchive 'tar.gz' file
-      unarchive:
+      ansible.builtin.unarchive:
         src: "{{ src_dir }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
         dest: "{{ unarchive_tempdir.path }}"
         owner: "{{ _cd_build.artifacts[artifact].install.user }}"
@@ -17,7 +17,7 @@
         remote_src: yes
 
     - name: "Check Git-Commit for new installed artifact '{{ artifact }}'"
-      include_tasks: "check-git-commit.yml"
+      ansible.builtin.include_tasks: "check-git-commit.yml"
       vars:
         artifact_dir: "{{ unarchive_tempdir.path }}"
         # This is a filename pattern that should be searched for in the artifact_dir.
@@ -28,18 +28,18 @@
       when: not _cd_build.use_local_artifacts|default(false)
 
     - name: "Copy unarchived 'tar.gz' content to install dir {{ _cd_build.artifacts[artifact].install.dir }}"
-      synchronize:
+      ansible.posix.synchronize:
         src: "{{ unarchive_tempdir.path }}/"
         dest: "{{ _cd_build.artifacts[artifact].install.dir }}"
         recursive: yes
       delegate_to: "{{ inventory_hostname }}"
 
     - name: "Install Build Info for artifact '{{ artifact }}'"
-      include_tasks: install-build-info.yml
+      ansible.builtin.include_tasks: install-build-info.yml
 
   always:
 
     - name: Cleanup unarchive TEMP dir
-      file:
+      ansible.builtin.file:
         name: "{{ unarchive_tempdir.path }}"
         state: absent

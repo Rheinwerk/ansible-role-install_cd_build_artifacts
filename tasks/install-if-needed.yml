@@ -1,7 +1,7 @@
 ---
 
 - name: "Check Git-Commit of already installed artifact ('{{ artifact }}')"
-  include_tasks: "check-git-commit.yml"
+  ansible.builtin.include_tasks: "check-git-commit.yml"
   vars:
     # This is the target dir of the artifact
     artifact_dir: "{{ _cd_build.artifacts[artifact].install.dir }}"
@@ -13,5 +13,5 @@
     fail_if_not_matched: no
 
 - name: "Install artifact '{{ artifact }}'"
-  include_tasks: install.yml
+  ansible.builtin.include_tasks: install.yml
   when: not git_commit_matched

@@ -1,7 +1,7 @@
 ---
 
 - name: Create temp file
-  tempfile:
+  ansible.builtin.tempfile:
     state: file
   register: tempfile
 
@@ -9,7 +9,7 @@
   block:
 
     - name: Install GPG Public Key
-      copy:
+      ansible.builtin.copy:
         src: "jenkins@centerdevice.de.pub"
         dest: "{{ tempfile.path }}"
         owner: root
@@ -17,11 +17,11 @@
         mode: 0600
 
     - name: Import GPG Public Key # noqa no-changed-when
-      command: gpg --import {{ tempfile.path }}
+      ansible.builtin.command: gpg --import {{ tempfile.path }}
 
   always:
 
     - name: Cleanup temp file
-      file:
+      ansible.builtin.file:
         name: "{{ tempfile.path }}"
         state: absent
