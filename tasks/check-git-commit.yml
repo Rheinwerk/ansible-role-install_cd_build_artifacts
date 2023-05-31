@@ -24,6 +24,7 @@
 - name: Git-Commit gathering
   when: found.matched == 1
   block:
+    # No way to combine unzip and grepping in file with single Ansible task. Silencing Ansible Lint check
     - name: "Search for Git-Commit in MANIFEST.MF ({{ found.files.0.path }})" # noqa command-instead-of-module
       ansible.builtin.shell: "unzip -p {{ found.files.0.path }} META-INF/MANIFEST.MF | awk '/Git-Commit:(.*)/ { print $2 }'"
       changed_when: no
