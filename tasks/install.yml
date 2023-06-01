@@ -21,7 +21,7 @@
         - name: Download artifact
           amazon.aws.aws_s3:
             bucket: "{{ _cd_build.bucket }}"
-            object: "{{ _cd_build.prefix | default('') }}/{{ _cd_build.branch }}/builds/{{ _cd_build.number }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
+            object: "{% if _cd_build.prefix is defined %}{{ _cd_build.prefix + '/' }}{% endif %}{{ _cd_build.branch }}/builds/{{ _cd_build.number }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
             dest: "{{ tempdir.path }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
             mode: get
             overwrite: different
@@ -29,7 +29,7 @@
         - name: Download signature file of artifact
           amazon.aws.aws_s3:
             bucket: "{{ _cd_build.bucket }}"
-            object: "{{ _cd_build.prefix | default('') }}/{{ _cd_build.branch }}/builds/{{ _cd_build.number }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig"
+            object: "{% if _cd_build.prefix is defined %}{{ _cd_build.prefix + '/' }}{% endif %}{{ _cd_build.branch }}/builds/{{ _cd_build.number }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig"
             dest: "{{ tempdir.path }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig"
             mode: get
             overwrite: different
