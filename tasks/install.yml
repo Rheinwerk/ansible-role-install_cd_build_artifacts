@@ -19,7 +19,7 @@
       when: not _cd_build.use_local_artifacts|default(false)
       block:
         - name: Download artifact
-          amazon.aws.aws_s3:
+          amazon.aws.s3_object:
             bucket: "{{ _cd_build.bucket }}"
             object: "{% if _cd_build.prefix is defined %}{{ _cd_build.prefix + '/' }}{% endif %}{{ _cd_build.branch }}/builds/{{ _cd_build.number }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
             dest: "{{ tempdir.path }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
@@ -27,7 +27,7 @@
             overwrite: different
 
         - name: Download signature file of artifact
-          amazon.aws.aws_s3:
+          amazon.aws.s3_object:
             bucket: "{{ _cd_build.bucket }}"
             object: "{% if _cd_build.prefix is defined %}{{ _cd_build.prefix + '/' }}{% endif %}{{ _cd_build.branch }}/builds/{{ _cd_build.number }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig"
             dest: "{{ tempdir.path }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig"
