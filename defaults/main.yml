@@ -12,7 +12,21 @@ _cd_build:
     user: root
     group: root
   gpg:
-    key: 0123456789ABCDEF
+    keyid: 0123456789ABCDEF
+    pubkey: |
+      -----BEGIN PGP PUBLIC KEY BLOCK-----
+
+      mQGNBF8dummyExample1234567890ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijk
+      lmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXZYabcdefghijkl
+      mnopqrstuv0123456789ABCDEFGHijklmnopqrstuvwxyzABCDEFGHIJKLMNOpq
+      rstuvwxyz0123456789ABCDEFGHijklmnopqrstuvWXYZabcdefghijklmNOPQR
+      STUVWXYZ0123456789abcdefghijklmnopqrstuvABCDEFGHIJKLMNOPQRSTUV
+      WXYZ0123456789abcdefghijklmnoPQRSTUVwxyzABCDEFGHIJKLMNOpqrstuv
+      wxyz0123456789ABCDEFGHijklmnopqrstuvWXYZabcdefghijklmNOPQRstu
+      vwxyz0123456789ABCDEFGHijklmnopqrstuvWXYZabcdefghijklmNOPQRstu
+      vwxyz0123456789ABCDEFGHijklmnopqrstuvWXYZ
+      =ABCD
+      -----END PGP PUBLIC KEY BLOCK-----
   artifacts:
     "artifact-01":
       artifact:

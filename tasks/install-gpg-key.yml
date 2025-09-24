@@ -7,20 +7,18 @@
 
 - name: GPG Public Key
   block:
-
-    - name: Install GPG Public Key
+    - name: Create GPG Public Key file
       ansible.builtin.copy:
-        src: "jenkins@centerdevice.de.pub"
         dest: "{{ tempfile.path }}"
         owner: root
         group: root
         mode: 0600
+        content: "{{ _cd_build.gpg.pubkey }}"
 
     - name: Import GPG Public Key # noqa no-changed-when
       ansible.builtin.command: gpg --import {{ tempfile.path }}
 
   always:
-
     - name: Cleanup temp file
       ansible.builtin.file:
         name: "{{ tempfile.path }}"

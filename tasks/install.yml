@@ -35,7 +35,7 @@
             overwrite: different
 
         - name: Verify signed file
-          ansible.builtin.command: "gpg --verify --trusted-key {{ _cd_build.gpg.key }} {{ tempdir.path }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig {{ tempdir.path }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
+          ansible.builtin.command: "gpg --verify --trusted-key {{ _cd_build.gpg.keyid }} {{ tempdir.path }}/{{ _cd_build.artifacts[artifact].artifact.filename }}.sig {{ tempdir.path }}/{{ _cd_build.artifacts[artifact].artifact.filename }}"
           changed_when: no
 
     - name: Create install dir
