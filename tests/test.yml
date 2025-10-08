@@ -1,7 +1,0 @@
----
-- hosts: localhost
-  connection: local
-  become: yes
-
-  roles:
-    - ansible-role-install_cd_build_artifacts
