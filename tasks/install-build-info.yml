@@ -6,7 +6,7 @@
     state: directory
     owner: "{{ _cd_build.info.user }}"
     group: "{{ _cd_build.info.group }}"
-    mode: 0755
+    mode: "0755"
 
 - name: Install Build Info file
   ansible.builtin.template:
@@ -14,4 +14,4 @@
     dest: "{{ _cd_build.info.dir }}/{{ artifact }}.yml"
     owner: "{{ _cd_build.info.user }}"
     group: "{{ _cd_build.info.group }}"
-    mode: 0640
+    mode: "0640"

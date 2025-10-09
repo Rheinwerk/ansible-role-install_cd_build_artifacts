@@ -12,7 +12,7 @@
         dest: "{{ tempfile.path }}"
         owner: root
         group: root
-        mode: 0600
+        mode: "0600"
         content: "{{ _cd_build.gpg.pubkey }}"
 
     - name: Import GPG Public Key # noqa no-changed-when

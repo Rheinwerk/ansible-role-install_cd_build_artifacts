@@ -18,7 +18,7 @@
     dest: "{{ _cd_build.artifacts[artifact].install.dir }}/{{ _cd_build.artifacts[artifact].install.filename }}"
     owner: "{{ _cd_build.artifacts[artifact].install.user }}"
     group: "{{ _cd_build.artifacts[artifact].install.group }}"
-    mode: 0644
+    mode: "0644"
     remote_src: yes
 
 - name: "Install Build Info for artifact '{{ artifact }}'"
